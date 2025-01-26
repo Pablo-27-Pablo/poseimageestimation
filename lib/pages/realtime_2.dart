@@ -254,12 +254,14 @@ class _MyHomePageState extends State<MyHomePage> {
             width: size.width,
             height: size.height,
             child: Container(
+              padding: EdgeInsets.only(bottom: 80),
               decoration: warningIndicatorScreen
                   ? BoxDecoration()
                   : BoxDecoration(
                       border: Border.all(width: 2, color: Colors.red),
                       color: Colors.red.withOpacity(0.1)),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                     children: [
@@ -293,138 +295,148 @@ class _MyHomePageState extends State<MyHomePage> {
                           )),
                     ],
                   ),
-                  SizedBox(
-                    height: 410,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15),
-                    child: Row(
-                      children: [
-                        Container(
-                            width: 250,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: 180,
-                                  height: 27,
-                                  decoration: BoxDecoration(
-                                    color:
-                                        AppColor.bottonPrimary.withOpacity(0.8),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(
-                                    "Exercise Feedback: ",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: AppColor.purpletext),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                warningIndicatorText == ""
-                                    ? Container()
-                                    : Container(
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: Container(
+                          padding: EdgeInsets.only(left: 25,right: 25),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                  width: 250,
+                                  
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
                                         width: 180,
+                                        height: 27,
                                         decoration: BoxDecoration(
-                                            color: const Color.fromARGB(
-                                                    255, 247, 247, 247)
-                                                .withOpacity(0.7),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                width: 1,
-                                                color: const Color.fromARGB(
-                                                    255, 255, 255, 255))),
+                                          color: AppColor.bottonPrimary
+                                              .withOpacity(0.8),
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
                                         child: Text(
-                                          warningIndicatorText,
+                                          "Exercise Feedback: ",
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                              color: AppColor.solidtext,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 16),
+                                              fontSize: 18,
+                                              color: AppColor.purpletext),
                                         ),
                                       ),
-                                      SizedBox(height: 10,),
-
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      warningIndicatorText == ""
+                                          ? Container()
+                                          : Container(
+                                              width: 180,
+                                              decoration: BoxDecoration(
+                                                  color: const Color.fromARGB(
+                                                          255, 247, 247, 247)
+                                                      .withOpacity(0.7),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color: const Color.fromARGB(
+                                                          255, 255, 255, 255))),
+                                              child: Text(
+                                                warningIndicatorText,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: AppColor.solidtext,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
+                                              ),
+                                            ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                          
                                       //error indicator in exercise
-                                warningIndicatorTextExercise == ""
-                                    ? Container()
-                                    : Container(
-                                        width: 180,
-                                        decoration: BoxDecoration(
-                                            color: const Color.fromARGB(
-                                                    255, 247, 247, 247)
-                                                .withOpacity(0.7),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                width: 1,
-                                                color: const Color.fromARGB(
-                                                    255, 255, 255, 255))),
-                                        child: Text(
-                                          warningIndicatorTextExercise,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              color: AppColor.solidtext,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                              ],
-                            )),
-                        SizedBox(
-                          width: 35,
-                        ),
-                        Container(
-                          width: 90,
-                          height: 140,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20)),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Image.network(
-                              'https://homeworkouts.org/wp-content/uploads/anim-sumo-squats.gif',
-                              fit: BoxFit.cover,
-                            ),
+                                      warningIndicatorTextExercise == ""
+                                          ? Container()
+                                          : Container(
+                                              width: 180,
+                                              decoration: BoxDecoration(
+                                                  color: const Color.fromARGB(
+                                                          255, 247, 247, 247)
+                                                      .withOpacity(0.7),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color: const Color.fromARGB(
+                                                          255, 255, 255, 255))),
+                                              child: Text(
+                                                warningIndicatorTextExercise,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: AppColor.solidtext,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
+                                              ),
+                                            ),
+                                    ],
+                                  )),
+                              
+                              Flexible(
+                                child: Container(
+                                  width: 90,
+                                  height: 140,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20)),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: Image.asset(
+                                      'assets/image/squat.gif',
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  largeGap,
-                  Container(
-                    height: 70,
-                    color: AppColor.backgroundgrey.withOpacity(0.8),
-                    child: GestureDetector(
-                      onDoubleTap: () {
-                        print("Pagod na pagod nako");
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            "Go to the next workout",
-                            style: TextStyle(
+                      ),largeGap,
+
+                      Container(
+                        height: 70,
+                        color: AppColor.backgroundgrey.withOpacity(0.8),
+                        child: GestureDetector(
+                          onDoubleTap: () {
+                            print("Pagod na pagod nako");
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "Go to the next workout",
+                                style: TextStyle(
+                                    color: AppColor.textwhite,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Icon(
+                                Icons.arrow_right,
                                 color: AppColor.textwhite,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20),
+                                size: 35,
+                              )
+                            ],
                           ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Icon(
-                            Icons.arrow_right,
-                            color: AppColor.textwhite,
-                            size: 35,
-                          )
-                        ],
-                      ),
-                    ),
-                  )
+                        ),
+                      )
+                    ],
+                  ),
+
                 ],
               ),
             )),
