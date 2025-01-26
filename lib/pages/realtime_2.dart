@@ -8,7 +8,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
+import 'package:poseimageestimation/exercise/exercise.dart';
 import 'package:poseimageestimation/main.dart';
+import 'package:poseimageestimation/utils/constant.dart';
+import '../utils/constant.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -24,7 +27,6 @@ class _MyHomePageState extends State<MyHomePage> {
   dynamic _scanResults;
   int selectedCameraIndex = 1;
   bool fixingcamera = true;
-  int raise = 0;
 
   final Map<DeviceOrientation, int> _orientations = {
     DeviceOrientation.portraitUp: 0,
@@ -139,22 +141,17 @@ class _MyHomePageState extends State<MyHomePage> {
       PoseLandmark leftWrist = pose.landmarks[PoseLandmarkType.leftWrist]!;
       PoseLandmark rightWrist = pose.landmarks[PoseLandmarkType.rightWrist]!;
       PoseLandmark head = pose.landmarks[PoseLandmarkType.rightEye]!;
+      PoseLandmark leftHip = pose.landmarks[PoseLandmarkType.leftHip]!;
+      PoseLandmark rightHip = pose.landmarks[PoseLandmarkType.rightHip]!;
+      PoseLandmark leftKnee = pose.landmarks[PoseLandmarkType.leftKnee]!;
+      PoseLandmark leftAnkle = pose.landmarks[PoseLandmarkType.leftAnkle]!;
+      double averageShoulder = (leftShoulder.x + rightShoulder.x) / 2;
+      double averagehips = (leftHip.x + rightHip.x) / 2;
 
-      if (leftWrist.y < head.y || leftWrist.x < head.x) {
-        setState(() {
-          raise = raise + 1;
-        });
-        print("hatdog");
-        print("hatdog");
-        print("hatdog");
-
-        print("hatdog");
-        print("hatdog");
-
-        print("hatdog");
-
-        print("hatdog");
-      }
+      squatExercise(leftHip, leftKnee, leftAnkle, averageShoulder, averagehips);
+      setState(() {
+        raise = raise;
+      });
 ///////////////////////////////
       pose.landmarks.forEach((_, landmark) {
         final x = landmark.x;
@@ -248,6 +245,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: buildResult()),
             );
 
+      //output screen
+
       stackChildren.add(
         Positioned(
             top: 0.0,
@@ -255,8 +254,178 @@ class _MyHomePageState extends State<MyHomePage> {
             width: size.width,
             height: size.height,
             child: Container(
+              decoration: warningIndicatorScreen
+                  ? BoxDecoration()
+                  : BoxDecoration(
+                      border: Border.all(width: 2, color: Colors.red),
+                      color: Colors.red.withOpacity(0.1)),
               child: Column(
-                children: [Text(raise.toString())],
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        raise.toString(),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 70,
+                            color: Colors.yellow),
+                      ),
+                      Text("Reps Count/s"),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                          width: 100,
+                          decoration: BoxDecoration(
+                              color: AppColor.textwhite,
+                              borderRadius: BorderRadius.circular(13)),
+                          child: Column(
+                            children: [
+                              Text("Time"),
+                              Text(
+                                "10:2".toString(),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                    color: AppColor.shadow),
+                              ),
+                            ],
+                          )),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 410,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15),
+                    child: Row(
+                      children: [
+                        Container(
+                            width: 250,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 180,
+                                  height: 27,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        AppColor.bottonPrimary.withOpacity(0.8),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    "Exercise Feedback: ",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: AppColor.purpletext),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                warningIndicatorText == ""
+                                    ? Container()
+                                    : Container(
+                                        width: 180,
+                                        decoration: BoxDecoration(
+                                            color: const Color.fromARGB(
+                                                    255, 247, 247, 247)
+                                                .withOpacity(0.7),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            border: Border.all(
+                                                width: 1,
+                                                color: const Color.fromARGB(
+                                                    255, 255, 255, 255))),
+                                        child: Text(
+                                          warningIndicatorText,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              color: AppColor.solidtext,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16),
+                                        ),
+                                      ),
+                                      SizedBox(height: 10,),
+
+                                      //error indicator in exercise
+                                warningIndicatorTextExercise == ""
+                                    ? Container()
+                                    : Container(
+                                        width: 180,
+                                        decoration: BoxDecoration(
+                                            color: const Color.fromARGB(
+                                                    255, 247, 247, 247)
+                                                .withOpacity(0.7),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            border: Border.all(
+                                                width: 1,
+                                                color: const Color.fromARGB(
+                                                    255, 255, 255, 255))),
+                                        child: Text(
+                                          warningIndicatorTextExercise,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              color: AppColor.solidtext,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16),
+                                        ),
+                                      ),
+                              ],
+                            )),
+                        SizedBox(
+                          width: 35,
+                        ),
+                        Container(
+                          width: 90,
+                          height: 140,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20)),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.network(
+                              'https://homeworkouts.org/wp-content/uploads/anim-sumo-squats.gif',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  largeGap,
+                  Container(
+                    height: 70,
+                    color: AppColor.backgroundgrey.withOpacity(0.8),
+                    child: GestureDetector(
+                      onDoubleTap: () {
+                        print("Pagod na pagod nako");
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            "Go to the next workout",
+                            style: TextStyle(
+                                color: AppColor.textwhite,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Icon(
+                            Icons.arrow_right,
+                            color: AppColor.textwhite,
+                            size: 35,
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
               ),
             )),
       );
@@ -265,12 +434,15 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text(
           "Pose Estimation",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: AppColor.purpletext),
         ),
-        backgroundColor: Colors.yellow,
+        backgroundColor: AppColor.backgroundgrey,
         actions: [
           IconButton(
-            icon: Icon(Icons.flip_camera_android),
+            icon: Icon(
+              Icons.flip_camera_android,
+              color: AppColor.purpletext,
+            ),
             onPressed: toggleCamera,
           ),
         ],
@@ -346,10 +518,11 @@ class PosePainter extends CustomPainter {
           PoseLandmarkType.leftShoulder, PoseLandmarkType.leftHip, leftPaint);
       paintLine(PoseLandmarkType.rightShoulder, PoseLandmarkType.rightHip,
           rightPaint);
-      paintLine(PoseLandmarkType.leftHip, PoseLandmarkType.rightHip, rightPaint);
-
       paintLine(
-          PoseLandmarkType.leftShoulder, PoseLandmarkType.rightShoulder, rightPaint);
+          PoseLandmarkType.leftHip, PoseLandmarkType.rightHip, rightPaint);
+
+      paintLine(PoseLandmarkType.leftShoulder, PoseLandmarkType.rightShoulder,
+          rightPaint);
       //Draw legs
       paintLine(PoseLandmarkType.leftHip, PoseLandmarkType.leftKnee, leftPaint);
       paintLine(
