@@ -10,8 +10,13 @@ import 'package:camera/camera.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'package:poseimageestimation/exercise/exercise.dart';
 import 'package:poseimageestimation/main.dart';
+import 'package:poseimageestimation/pages/home.dart';
+import 'package:poseimageestimation/pages/practice.dart';
 import 'package:poseimageestimation/utils/constant.dart';
 import '../utils/constant.dart';
+import 'dart:async';
+
+Timer? timer;
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -39,6 +44,28 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     initializeCamera();
+    startTimer();
+  }
+
+  void startTimer() {
+    timer = Timer.periodic(Duration(seconds: 1), (_) {
+      if (seconds > 0) {
+        seconds--;
+      } else {
+        timer?.cancel(); // Stop the timer
+        print("Timer has finished.");
+        seconds = 60;
+        raise = 0;
+        ExerciseName = "";
+        warningIndicatorScreen = true;
+        warningIndicatorText = "";
+
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Trypage()));
+      }
+
+      print("timer reduced" + seconds.toString());
+    });
   }
 
   Future<void> initializeCamera() async {
@@ -133,22 +160,55 @@ class _MyHomePageState extends State<MyHomePage> {
     final List<Pose> poses = await poseDetector.processImage(inputImage);
     _scanResults = poses;
     for (Pose pose in poses) {
-////////////////////////////////////
+// Extract key landmarks from the detected pose
+
+// **Upper Body Landmarks**
       PoseLandmark leftShoulder =
           pose.landmarks[PoseLandmarkType.leftShoulder]!;
       PoseLandmark rightShoulder =
           pose.landmarks[PoseLandmarkType.rightShoulder]!;
+      PoseLandmark leftElbow = pose.landmarks[PoseLandmarkType.leftElbow]!;
+      PoseLandmark rightElbow = pose.landmarks[PoseLandmarkType.rightElbow]!;
       PoseLandmark leftWrist = pose.landmarks[PoseLandmarkType.leftWrist]!;
       PoseLandmark rightWrist = pose.landmarks[PoseLandmarkType.rightWrist]!;
-      PoseLandmark head = pose.landmarks[PoseLandmarkType.rightEye]!;
+      PoseLandmark head = pose.landmarks[
+          PoseLandmarkType.rightEye]!; // Using right eye as head reference
+
+// **Lower Body Landmarks**
       PoseLandmark leftHip = pose.landmarks[PoseLandmarkType.leftHip]!;
       PoseLandmark rightHip = pose.landmarks[PoseLandmarkType.rightHip]!;
-      PoseLandmark leftKnee = pose.landmarks[PoseLandmarkType.leftKnee]!;
-      PoseLandmark leftAnkle = pose.landmarks[PoseLandmarkType.leftAnkle]!;
-      double averageShoulder = (leftShoulder.x + rightShoulder.x) / 2;
-      double averagehips = (leftHip.x + rightHip.x) / 2;
 
-      squatExercise(leftHip, leftKnee, leftAnkle, averageShoulder, averagehips);
+// **Legs Landmarks**
+      PoseLandmark leftKnee = pose.landmarks[PoseLandmarkType.leftKnee]!;
+      PoseLandmark rightKnee = pose.landmarks[PoseLandmarkType.rightKnee]!;
+      PoseLandmark leftAnkle = pose.landmarks[PoseLandmarkType.leftAnkle]!;
+      PoseLandmark rightAnkle = pose.landmarks[PoseLandmarkType.rightAnkle]!;
+
+// **Calculating Averages for Key Body Sections**
+
+// **Upper Body Averages**
+      double averageShoulderX = (leftShoulder.x + rightShoulder.x) / 2;
+      double averageShoulderY = (leftShoulder.y + rightShoulder.y) / 2;
+      double averageElbowY = (leftElbow.y + rightElbow.y) / 2;
+      double averageElbowX = (leftElbow.x + rightElbow.x) / 2;
+      double averageWristY = (leftWrist.y + rightWrist.y) / 2;
+      double averageWristX = (leftWrist.x + rightWrist.x) / 2;
+
+// **Lower Body Averages**
+      double averageHipsX = (leftHip.x + rightHip.x) / 2;
+      double averageHipsY = (leftHip.y + rightHip.y) / 2;
+
+// **Legs Averages**
+      double averageKneeY = (leftKnee.y + rightKnee.y) / 2;
+      double averageAnkleY = (leftAnkle.y + rightAnkle.y) / 2;
+
+      if (ExerciseName == "squat") {
+        squatExercise(
+            leftHip, leftKnee, leftAnkle, averageShoulderX, averageHipsX);
+      } else if (ExerciseName == "pushup") {
+        pushupExercise(averageWristY, averageShoulderY, averageElbowY, averageHipsY);
+      }
+
       setState(() {
         raise = raise;
       });
@@ -285,7 +345,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             children: [
                               Text("Time"),
                               Text(
-                                "10:2".toString(),
+                                seconds.toString(),
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 30,
@@ -301,15 +361,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       Padding(
                         padding: const EdgeInsets.only(left: 15),
                         child: Container(
-                          padding: EdgeInsets.only(left: 25,right: 25),
+                          padding: EdgeInsets.only(left: 25, right: 25),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Container(
                                   width: 250,
-                                  
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Container(
                                         width: 180,
@@ -317,7 +377,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                         decoration: BoxDecoration(
                                           color: AppColor.bottonPrimary
                                               .withOpacity(0.8),
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                         ),
                                         child: Text(
                                           "Exercise Feedback: ",
@@ -343,8 +404,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                                       BorderRadius.circular(10),
                                                   border: Border.all(
                                                       width: 1,
-                                                      color: const Color.fromARGB(
-                                                          255, 255, 255, 255))),
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              255,
+                                                              255,
+                                                              255))),
                                               child: Text(
                                                 warningIndicatorText,
                                                 textAlign: TextAlign.center,
@@ -357,7 +422,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       SizedBox(
                                         height: 10,
                                       ),
-                          
+
                                       //error indicator in exercise
                                       warningIndicatorTextExercise == ""
                                           ? Container()
@@ -371,8 +436,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                                       BorderRadius.circular(10),
                                                   border: Border.all(
                                                       width: 1,
-                                                      color: const Color.fromARGB(
-                                                          255, 255, 255, 255))),
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              255,
+                                                              255,
+                                                              255))),
                                               child: Text(
                                                 warningIndicatorTextExercise,
                                                 textAlign: TextAlign.center,
@@ -384,7 +453,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                             ),
                                     ],
                                   )),
-                              
                               Flexible(
                                 child: Container(
                                   width: 90,
@@ -394,7 +462,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(16),
                                     child: Image.asset(
-                                      'assets/image/squat.gif',
+                                      'assets/image/$image',
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -403,8 +471,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             ],
                           ),
                         ),
-                      ),largeGap,
-
+                      ),
+                      largeGap,
                       Container(
                         height: 70,
                         color: AppColor.backgroundgrey.withOpacity(0.8),
@@ -436,7 +504,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       )
                     ],
                   ),
-
                 ],
               ),
             )),

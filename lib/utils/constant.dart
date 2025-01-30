@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 //global variable
@@ -6,6 +7,14 @@ bool staticIsDown = false;
 bool warningIndicatorScreen = true;
 String warningIndicatorText = "";
 String warningIndicatorTextExercise = "";
+int raise = 0;
+int seconds = 60;
+Timer? timer;
+String ExerciseName = "";
+String image = "";
+bool isDownPosition = false;
+
+
 
 //small Gap
 
@@ -44,4 +53,18 @@ class AppColor {
   static const Color yellowtext = Color.fromARGB(255, 226, 241, 99);
   static const Color purpletext = Color.fromARGB(255, 179, 160, 255);
   static const Color backgroundgrey = Color.fromARGB(255, 30, 30, 30);
+}
+
+class Utils extends StatefulWidget {
+  const Utils({super.key});
+
+  @override
+  State<Utils> createState() => _UtilsState();
+}
+
+class _UtilsState extends State<Utils> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold();
+  }
 }

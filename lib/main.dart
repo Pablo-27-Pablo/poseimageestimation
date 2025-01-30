@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
+import 'package:poseimageestimation/pages/practice.dart';
 import 'package:poseimageestimation/pages/realtime_2.dart';
-import 'package:poseimageestimation/pages/try.dart';
+import 'package:poseimageestimation/utils/constant.dart';
+
 
 late List<CameraDescription> cameras;
 void main() async {
@@ -23,7 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MyHomePage(),
+      home: Trypage(),
     );
   }
 }
