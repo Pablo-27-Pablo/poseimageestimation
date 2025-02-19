@@ -163,6 +163,8 @@ class _MyHomePageState extends State<MyHomePage> {
 // Extract key landmarks from the detected pose
 
 // **Upper Body Landmarks**
+      PoseLandmark rightEars = pose.landmarks[PoseLandmarkType.rightEar]!;
+      PoseLandmark leftEars = pose.landmarks[PoseLandmarkType.leftEar]!;
       PoseLandmark leftShoulder =
           pose.landmarks[PoseLandmarkType.leftShoulder]!;
       PoseLandmark rightShoulder =
@@ -173,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
       PoseLandmark rightWrist = pose.landmarks[PoseLandmarkType.rightWrist]!;
       PoseLandmark head = pose.landmarks[
           PoseLandmarkType.rightEye]!; // Using right eye as head reference
-
+      PoseLandmark nose = pose.landmarks[PoseLandmarkType.nose]!;
 // **Lower Body Landmarks**
       PoseLandmark leftHip = pose.landmarks[PoseLandmarkType.leftHip]!;
       PoseLandmark rightHip = pose.landmarks[PoseLandmarkType.rightHip]!;
@@ -193,6 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
       double averageElbowX = (leftElbow.x + rightElbow.x) / 2;
       double averageWristY = (leftWrist.y + rightWrist.y) / 2;
       double averageWristX = (leftWrist.x + rightWrist.x) / 2;
+      double averageEarsY = (leftEars.y + rightEars.y) / 2;
 
 // **Lower Body Averages**
       double averageHipsX = (leftHip.x + rightHip.x) / 2;
@@ -200,14 +203,87 @@ class _MyHomePageState extends State<MyHomePage> {
 
 // **Legs Averages**
       double averageKneeY = (leftKnee.y + rightKnee.y) / 2;
+      double averageKneeX = (leftKnee.x + rightKnee.x) / 2;
       double averageAnkleY = (leftAnkle.y + rightAnkle.y) / 2;
 
-      if (ExerciseName == "squat") {
-        squatExercise(
-            leftHip, leftKnee, leftAnkle, averageShoulderX, averageHipsX);
-      } else if (ExerciseName == "pushup") {
-        pushupExercise(averageWristY, averageShoulderY, averageElbowY, averageHipsY);
+      if (85 > (leftEars.x - rightEars.x)) {
+        errorWholebody = "";
+        warningIndicatorScreen = true;
+        if ((rightWrist.y > 700 && rightWrist.y < 800) &&
+            (leftWrist.y > 700 && leftWrist.y < 800) &&
+            (rightWrist.x > 500 && rightWrist.x < 700) &&
+            (leftWrist.x > 500 && leftWrist.x < 700)) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => Trypage()));
+        }
+
+        if (ExerciseName == "squat") {
+          squatExercise(leftHip, leftKnee, leftAnkle, averageShoulderX,
+              averageHipsX, averageShoulderY, averageHipsY);
+        } else if (ExerciseName == "pushup") {
+          pushupExercise(averageWristY, averageShoulderY, averageElbowY,
+              averageHipsY, averageKneeY, averageAnkleY);
+        } else if (ExerciseName == "jumpingjacks") {
+          jumpingJacksExercise(
+              averageWristY,
+              averageShoulderY,
+              leftAnkle.x,
+              rightAnkle.x,
+              leftShoulder.x,
+              rightShoulder.x,
+              averageHipsY,
+              averageShoulderX,
+              averageHipsX,averageAnkleY);
+        } else if (ExerciseName == "legraises") {
+          legRaiseExercise(averageHipsY, averageKneeY, averageAnkleY, averageShoulderY, averageEarsY);
+        } else if (ExerciseName == "situp") {
+          sitUpExercise(nose.y, averageShoulderY, averageHipsY, averageKneeY,
+              averageAnkleY);
+        } else if (ExerciseName == "mountainclimbers") {
+          mountainClimbersExercise(averageKneeY, averageHipsX, leftKnee.x,
+              leftKnee.y, rightKnee.x, rightKnee.y, averageWristY,averageShoulderY,averageHipsY);
+        } else if (ExerciseName == "highknee") {
+          highKneeExercise(leftKnee.y, rightKnee.y, averageHipsY, averageHipsX,
+              averageShoulderX,averageShoulderY,averageAnkleY);
+        } else if (ExerciseName == "lunges") {
+          lungesExercise(
+              averageHipsY,
+              averageHipsX,
+              leftKnee.x,
+              leftKnee.y,
+              rightKnee.x,
+              rightKnee.y,
+              leftAnkle.y,
+              leftAnkle.x,
+              rightAnkle.y,
+              rightAnkle.x,
+              averageShoulderX);
+        } else if (ExerciseName == "plank") {
+          normalPlankExercise(averageShoulderY, averageHipsY, averageAnkleY,
+              leftElbow.y, leftKnee.y, rightKnee.y, rightShoulder.y);
+        } else if (ExerciseName == "rightplank") {
+          sidePlankRightExercise(averageShoulderY, averageHipsY, averageAnkleY,
+              rightElbow.y, rightKnee.y, leftElbow.y, leftShoulder.y);
+        } else if (ExerciseName == "leftplank") {
+          sidePlankLeftExercise(averageShoulderY, averageHipsY, averageAnkleY,
+              leftElbow.y, leftKnee.y, rightElbow.y, rightShoulder.y);
+        }
+      } else {
+        errorWholebody = "Show your whole Body!!";
+        warningIndicatorScreen = false;
       }
+
+      // lungesExercise(
+      //     averageHipsY,
+      //     averageHipsX,
+      //     leftKnee.x,
+      //     leftKnee.y,
+      //     rightKnee.x,
+      //     rightKnee.y,
+      //     leftAnkle.y,
+      //     leftAnkle.x,
+      //     rightAnkle.y,
+      //     rightAnkle.x);
 
       setState(() {
         raise = raise;
@@ -358,6 +434,44 @@ class _MyHomePageState extends State<MyHomePage> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.only(left: 20),
+                            height: 70,
+                            color: AppColor.backgroundgrey.withOpacity(0.8),
+                            child: GestureDetector(
+                              onDoubleTap: () {
+                                print("Pagod na pagod nako");
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    "Next",
+                                    style: TextStyle(
+                                        color: AppColor.textwhite,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Icon(
+                                    Icons.arrow_right,
+                                    color: AppColor.textwhite,
+                                    size: 35,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      largeGap,
+                      largeGap,
+                      largeGap,
                       Padding(
                         padding: const EdgeInsets.only(left: 15),
                         child: Container(
@@ -392,7 +506,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       SizedBox(
                                         height: 10,
                                       ),
-                                      warningIndicatorText == ""
+                                      errorWholebody == ""
                                           ? Container()
                                           : Container(
                                               width: 180,
@@ -411,7 +525,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                               255,
                                                               255))),
                                               child: Text(
-                                                warningIndicatorText,
+                                                errorWholebody,
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                     color: AppColor.solidtext,
@@ -419,6 +533,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     fontSize: 16),
                                               ),
                                             ),
+
                                       SizedBox(
                                         height: 10,
                                       ),
@@ -473,35 +588,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       largeGap,
-                      Container(
-                        height: 70,
-                        color: AppColor.backgroundgrey.withOpacity(0.8),
-                        child: GestureDetector(
-                          onDoubleTap: () {
-                            print("Pagod na pagod nako");
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                "Go to the next workout",
-                                style: TextStyle(
-                                    color: AppColor.textwhite,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Icon(
-                                Icons.arrow_right,
-                                color: AppColor.textwhite,
-                                size: 35,
-                              )
-                            ],
-                          ),
-                        ),
-                      )
                     ],
                   ),
                 ],

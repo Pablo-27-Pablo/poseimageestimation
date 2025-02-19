@@ -12,81 +12,69 @@ class Trypage extends StatefulWidget {
 
 class _TrypageState extends State<Trypage> {
   FlutterTts _flutterTts = FlutterTts();
-  speak(text) async {
-    _flutterTts.setLanguage("en-US");
-    _flutterTts.setPitch(0.5);
-    _flutterTts.speak(text);
+
+  final List<Map<String, String>> exercises = [
+    {"name": "squat", "image": "squat.gif"},
+    {"name": "jumpingjacks", "image": "jumpingjacks.gif"},
+    {"name": "legraises", "image": "legraises.gif"},
+    {"name": "situp", "image": "situp.gif"},
+    {"name": "mountainclimbers", "image": "mountainclimbers.gif"},
+    {"name": "highknee", "image": "highknee.gif"},
+    {"name": "lunges", "image": "lunges.gif"},
+    {"name": "plank", "image": "plank.jpg"},
+    {"name": "rightplank", "image": "sideplank.gif"},
+    {"name": "leftplank", "image": "sideplank.gif"},
+    {"name": "pushup", "image": "sideplank.jpg"},
+  ];
+
+  void _speak(String text) async {
+    await _flutterTts.setLanguage("en-US");
+    await _flutterTts.setPitch(0.5);
+    await _flutterTts.speak(text);
+  }
+
+  void _startExercise(String exerciseName, String imageName) {
+    setState(() {
+      ExerciseName = exerciseName;
+      image = imageName;
+    });
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => MyHomePage()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("try page"),
-      ),
-      body: Column(
-        children: [
-          Container(
-            color: Colors.grey.withOpacity(0.5),
+      appBar: AppBar(title: const Text("Try Page")),
+      body: ListView.builder(
+        itemCount: exercises.length,
+        itemBuilder: (context, index) {
+          final exercise = exercises[index];
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.grey.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("squat"),
+                Text(
+                  exercise["name"]!,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 IconButton(
-                    onPressed: () {
-                      ExerciseName = "squat";
-                      image = "squat.gif";
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MyHomePage()));
-                    },
-                    icon: Icon(Icons.abc)),
+                  onPressed: () => _startExercise(exercise["name"]!, exercise["image"]!),
+                  icon: const Icon(Icons.fitness_center),
+                ),
               ],
             ),
-          ),
-          SizedBox(
-            height: 50,
-          ),
-          Container(
-            color: Colors.grey.withOpacity(0.5),
-            child: Row(
-              children: [
-                Text("Pushup"),
-                IconButton(
-                    onPressed: () {
-                      ExerciseName = "pushup";
-                      image = "pushup.gif";
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MyHomePage()));
-                    },
-                    icon: Icon(Icons.abc)),
-              ],
-            
-            ),
-          ),
-          SizedBox(
-            height: 50,
-          ),
-          Container(
-            color: Colors.grey.withOpacity(0.5),
-            child: Row(
-              children: [
-                Text("Speak"),
-                IconButton(
-                    onPressed: () {
-                      speak("Hello Hello Happy New Year everyone");
-                      // ExerciseName = "pushup";
-                      // image = "pushup.gif";
-                      // Navigator.push(context,
-                      //     MaterialPageRoute(builder: (context) => MyHomePage()));
-                    },
-                    icon: Icon(Icons.abc)),
-              ],
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }

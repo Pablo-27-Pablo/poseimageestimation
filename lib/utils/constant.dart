@@ -13,7 +13,11 @@ Timer? timer;
 String ExerciseName = "";
 String image = "";
 bool isDownPosition = false;
-
+String errorWholebody = "";
+int lastUpdateTime = 0;
+int lastUpdateTime2 = 0;
+int lastUpdateTime3 = 0;
+   int currentTime5 = DateTime.now().millisecondsSinceEpoch;
 
 
 //small Gap
