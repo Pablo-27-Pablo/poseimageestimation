@@ -10,9 +10,12 @@ import 'package:camera/camera.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'package:poseimageestimation/exercise/exercise.dart';
 import 'package:poseimageestimation/main.dart';
+import 'package:poseimageestimation/pages/arcade_mode_page.dart';
 import 'package:poseimageestimation/pages/home.dart';
 import 'package:poseimageestimation/pages/practice.dart';
+import 'package:poseimageestimation/pages/resttime.dart';
 import 'package:poseimageestimation/utils/constant.dart';
+
 import '../utils/constant.dart';
 import 'dart:async';
 
@@ -26,6 +29,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late CameraController controller;
   bool isBusy = false;
+
   CameraImage? img;
   dynamic poseDetector;
   late Size size;
@@ -44,24 +48,71 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     initializeCamera();
-    startTimer();
+    // countingTimer();
+    // Future.delayed(Duration.zero, () {
+    //   // youNear ? () : startTimer();
+    //   startTimer();
+    // });
+    if (Mode == "dayChallenge") {
+      raise = peopleBox.get(ExerciseName) % 100;
+    }
+  }
+
+  void SecondOutput() {
+    if (ExerciseName == "plank" ||
+        ExerciseName == "rightplank" ||
+        ExerciseName == "leftplank") {
+    } else {}
+  }
+
+// Updated countingTimer function
+  void countingTimer() {
+    if (timer == null || !(timer!.isActive)) {
+      startTimer();
+    }
   }
 
   void startTimer() {
     timer = Timer.periodic(Duration(seconds: 1), (_) {
+      print("Timer has finished.");
+      print("Timer has finished.");
+      print("Timer has finished.");
       if (seconds > 0) {
         seconds--;
       } else {
         timer?.cancel(); // Stop the timer
         print("Timer has finished.");
-        seconds = 60;
+
         raise = 0;
         ExerciseName = "";
         warningIndicatorScreen = true;
         warningIndicatorText = "";
+        ExerciseName = "";
+        seconds = 5;
+        if (Mode == "Arcade") {
+          if (arcadeNumber == 11) {
+            setState(() {
+              ExerciseName = "";
+              image = "";
+            });
 
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Trypage()));
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => ArcadeModePage()),
+            );
+          } else {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => RestimeTutorial()));
+
+            arcadeNumber = arcadeNumber + 1;
+          }
+        } else if (Mode == "postureCorrection") {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => Trypage()));
+        }else if (Mode == "dayChallenge") {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => Trypage()));
+        }
       }
 
       print("timer reduced" + seconds.toString());
@@ -205,10 +256,11 @@ class _MyHomePageState extends State<MyHomePage> {
       double averageKneeY = (leftKnee.y + rightKnee.y) / 2;
       double averageKneeX = (leftKnee.x + rightKnee.x) / 2;
       double averageAnkleY = (leftAnkle.y + rightAnkle.y) / 2;
-
-      if (85 > (leftEars.x - rightEars.x)) {
+      int currentTime4 = DateTime.now().millisecondsSinceEpoch;
+      if (65 > (leftEars.x - rightEars.x)) {
+        Mode == "dayChallenge" ? Container() : countingTimer();
         errorWholebody = "";
-        warningIndicatorScreen = true;
+
         if ((rightWrist.y > 700 && rightWrist.y < 800) &&
             (leftWrist.y > 700 && leftWrist.y < 800) &&
             (rightWrist.x > 500 && rightWrist.x < 700) &&
@@ -218,7 +270,7 @@ class _MyHomePageState extends State<MyHomePage> {
         }
 
         if (ExerciseName == "squat") {
-          squatExercise(leftHip, leftKnee, leftAnkle, averageShoulderX,
+          squatExercise(context, leftHip, leftKnee, leftAnkle, averageShoulderX,
               averageHipsX, averageShoulderY, averageHipsY);
         } else if (ExerciseName == "pushup") {
           pushupExercise(averageWristY, averageShoulderY, averageElbowY,
@@ -233,18 +285,28 @@ class _MyHomePageState extends State<MyHomePage> {
               rightShoulder.x,
               averageHipsY,
               averageShoulderX,
-              averageHipsX,averageAnkleY);
+              averageHipsX,
+              averageAnkleY);
         } else if (ExerciseName == "legraises") {
-          legRaiseExercise(averageHipsY, averageKneeY, averageAnkleY, averageShoulderY, averageEarsY);
+          legRaiseExercise(averageHipsY, averageKneeY, averageAnkleY,
+              averageShoulderY, averageEarsY);
         } else if (ExerciseName == "situp") {
           sitUpExercise(nose.y, averageShoulderY, averageHipsY, averageKneeY,
               averageAnkleY);
         } else if (ExerciseName == "mountainclimbers") {
-          mountainClimbersExercise(averageKneeY, averageHipsX, leftKnee.x,
-              leftKnee.y, rightKnee.x, rightKnee.y, averageWristY,averageShoulderY,averageHipsY);
+          mountainClimbersExercise(
+              averageKneeY,
+              averageHipsX,
+              leftKnee.x,
+              leftKnee.y,
+              rightKnee.x,
+              rightKnee.y,
+              averageWristY,
+              averageShoulderY,
+              averageHipsY);
         } else if (ExerciseName == "highknee") {
           highKneeExercise(leftKnee.y, rightKnee.y, averageHipsY, averageHipsX,
-              averageShoulderX,averageShoulderY,averageAnkleY);
+              averageShoulderX, averageShoulderY, averageAnkleY);
         } else if (ExerciseName == "lunges") {
           lungesExercise(
               averageHipsY,
@@ -269,8 +331,14 @@ class _MyHomePageState extends State<MyHomePage> {
               leftElbow.y, leftKnee.y, rightElbow.y, rightShoulder.y);
         }
       } else {
-        errorWholebody = "Show your whole Body!!";
-        warningIndicatorScreen = false;
+        if (ExerciseName != "") {
+          if (currentTime4 - lastUpdateTime3 >= 3000) {
+            errorWholebody = "Show your whole Body!!";
+            speak(errorWholebody);
+            warningIndicatorScreen = false;
+            lastUpdateTime3 = currentTime4; // Update the last update time
+          }
+        }
       }
 
       // lungesExercise(
@@ -402,13 +470,30 @@ class _MyHomePageState extends State<MyHomePage> {
                   Column(
                     children: [
                       Text(
+                        PrimaryExerciseName,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                            color: AppColor.yellowtext),
+                      ),
+                      Text(
                         raise.toString(),
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 70,
                             color: Colors.yellow),
                       ),
-                      Text("Reps Count/s"),
+                      ExerciseName == "plank" ||
+                              ExerciseName == "rightplank" ||
+                              ExerciseName == "leftplank"
+                          ? Text(
+                              "Second/s",
+                              style: TextStyle(color: AppColor.yellowtext),
+                            )
+                          : Text(
+                              "Reps Count/s",
+                              style: TextStyle(color: AppColor.yellowtext),
+                            ),
                       SizedBox(
                         height: 10,
                       ),
@@ -417,18 +502,20 @@ class _MyHomePageState extends State<MyHomePage> {
                           decoration: BoxDecoration(
                               color: AppColor.textwhite,
                               borderRadius: BorderRadius.circular(13)),
-                          child: Column(
-                            children: [
-                              Text("Time"),
-                              Text(
-                                seconds.toString(),
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 30,
-                                    color: AppColor.shadow),
-                              ),
-                            ],
-                          )),
+                          child: Mode == "dayChallenge"
+                              ? Container()
+                              : Column(
+                                  children: [
+                                    Text("Time"),
+                                    Text(
+                                      seconds.toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 30,
+                                          color: AppColor.shadow),
+                                    ),
+                                  ],
+                                )),
                     ],
                   ),
                   Column(
@@ -526,6 +613,36 @@ class _MyHomePageState extends State<MyHomePage> {
                                                               255))),
                                               child: Text(
                                                 errorWholebody,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: AppColor.solidtext,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
+                                              ),
+                                            ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      warningIndicatorText == ""
+                                          ? Container()
+                                          : Container(
+                                              width: 180,
+                                              decoration: BoxDecoration(
+                                                  color: const Color.fromARGB(
+                                                          255, 247, 247, 247)
+                                                      .withOpacity(0.7),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              255,
+                                                              255,
+                                                              255))),
+                                              child: Text(
+                                                warningIndicatorText,
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                     color: AppColor.solidtext,

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:poseimageestimation/exercise/exercise.dart';
+import 'package:poseimageestimation/pages/arcade_mode_page.dart';
+import 'package:poseimageestimation/pages/practice.dart';
 
 import '../utils/constant.dart';
 
@@ -90,46 +92,61 @@ class _MyHomeState extends State<MyHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Homepage"),
-        leading: IconButton(
-            onPressed: () {
-              
-            },
-            icon: Icon(Icons.abc)),
-      ),
-      body: Center(
-        child: GestureDetector(
-          onTap: () {
-            chooseImage();
-          },
-          onDoubleTap: () {
-            captureImage();
-          },
-          child: Container(
-            child: image != null
-                ? Center(
-                    child: FittedBox(
-                      child: SizedBox(
-                        width: image.width.toDouble(),
-                        height: image.height.toDouble(),
-                        child: CustomPaint(
-                          painter: PosePainter(poses, image),
-                        ),
-                      ),
-                    ),
-                  )
-                : Container(
-                    color: Colors.indigo,
-                    width: 350,
-                    height: 350,
-                    child: const Icon(
-                      Icons.camera_alt,
-                      color: Colors.white,
-                      size: 53,
-                    ),
-                  ),
-          ),
+        backgroundColor: Colors.black,
+        title: Text(
+          "hello",
+          style: TextStyle(color: Colors.white),
         ),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          GestureDetector(
+              onDoubleTap: () {
+                Mode = "postureCorrection";
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => Trypage()));
+              },
+              child: Container(
+                height: 135,
+                width: 500,
+                color: Colors.green,
+                child: Text("Posture Correction Exercise: "),
+              )),
+          GestureDetector(
+              onDoubleTap: () {
+                Mode = "postureCorrection";
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => Trypage()));
+              },
+              child: Container(
+                height: 135,
+                width: 500,
+                color: Colors.red,
+                child: Text("Exercise Reccomendations: "),
+              )),
+          GestureDetector(
+              onDoubleTap: () {
+                int last = peopleBox.get("final", defaultValue: 0);
+
+                if (last < 1 ) {
+                  peopleBox.put("squat", 0);
+                  peopleBox.put("legraises", 0);
+                  peopleBox.put("pushup", 0);
+                  peopleBox.put("situp", 0);
+                  peopleBox.put("final", 5);
+                }
+
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => ArcadeModePage()));
+              },
+              child: Container(
+                height: 135,
+                width: 500,
+                color: Colors.pink,
+                child: Text("Arcade Mode: "),
+              )),
+        ],
       ),
     );
   }

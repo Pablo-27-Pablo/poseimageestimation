@@ -1,9 +1,13 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:poseimageestimation/pages/DayChallengeComplete.dart';
 import 'package:poseimageestimation/pages/practice.dart';
 import 'package:poseimageestimation/utils/constant.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:async';
+import 'package:hive_flutter/hive_flutter.dart';
+
+
 
 FlutterTts _flutterTts = FlutterTts();
 speak(text) async {
@@ -13,7 +17,7 @@ speak(text) async {
 }
 
 // Function to detect squat exercise movements
-void squatExercise(leftHip, leftKnee, leftAnkle, averageShoulder, averageHips,
+void squatExercise(BuildContext context,leftHip, leftKnee, leftAnkle, averageShoulder, averageHips,
     averageShoulderY, averageHipsY) {
   double kneeAngle = calculateKneeAngle(leftHip, leftKnee, leftAnkle);
 
@@ -44,7 +48,21 @@ void squatExercise(leftHip, leftKnee, leftAnkle, averageShoulder, averageHips,
       if (staticIsDown && !staticIsUp) {
         staticIsUp = true;
         staticIsDown = false;
-        raise++;
+        if (Mode == "dayChallenge") {
+          days = peopleBox.get(ExerciseName, defaultValue: 0);
+          print(ExerciseName);
+          int TotalCount = 1 + days;
+          if (TotalCount % 100 == 0 && TotalCount >= 100 && TotalCount <= 3000) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => CompleteWorkout()),
+            );
+          }
+          peopleBox.put(ExerciseName, TotalCount);
+          raise = peopleBox.get(ExerciseName) % 100;
+        } else {
+          raise++;
+        }
         print("Squat count: $raise");
       }
     }
@@ -88,8 +106,15 @@ void pushupExercise(avgWristY, avgShoulderY, avgElbowY, averageHipsY,
         staticIsDown = false;
         print(staticIsUp);
 
-        // Count a completed push-up
-        raise++;
+        if (Mode == "dayChallenge") {
+          days = peopleBox.get(ExerciseName, defaultValue: 0);
+          print(ExerciseName);
+          int TotalCount = 1 + days;
+          peopleBox.put(ExerciseName, TotalCount);
+          raise = peopleBox.get(ExerciseName);
+        } else {
+          raise++;
+        }
         print("Push-up count: $raise");
       }
     }
@@ -210,7 +235,16 @@ void legRaiseExercise(
       if (staticIsDown && !staticIsUp) {
         staticIsUp = true;
         staticIsDown = false;
-        raise++;
+
+        if (Mode == "dayChallenge") {
+          days = peopleBox.get(ExerciseName, defaultValue: 0);
+          print(ExerciseName);
+          int TotalCount = 1 + days;
+          peopleBox.put(ExerciseName, TotalCount);
+          raise = peopleBox.get(ExerciseName);
+        } else {
+          raise++;
+        }
         print("Leg raise count: $raise");
       }
     }
@@ -247,7 +281,15 @@ void sitUpExercise(noseX, avgShoulderY, avgHipY, averageKneeY, averageAnkleY) {
         print(staticIsUp);
 
         // Count a completed sit-up
-        raise++;
+        if (Mode == "dayChallenge") {
+          days = peopleBox.get(ExerciseName, defaultValue: 0);
+          print(ExerciseName);
+          int TotalCount = 1 + days;
+          peopleBox.put(ExerciseName, TotalCount);
+          raise = peopleBox.get(ExerciseName);
+        } else {
+          raise++;
+        }
         print("Sit-up count: $raise");
       }
     }
@@ -295,7 +337,7 @@ void jumpingJacksExercise(
       warningIndicatorScreen = true;
       //jumpingJacksError(avgWristX, avgShoulderX, avgAnkleX, avgHipY, avgAnkleY);
       //print("Open position detected");
-      warningIndicatorScreen = true;
+
       warningIndicatorTextExercise = "";
 
       if (staticIsDown && !staticIsUp) {
@@ -403,10 +445,10 @@ void highKneeExercise(leftKneeY, rightKneeY, avgHipY, avgShoulderX, avgHipX,
 
 void sidePlankRightExercise(avgShoulderY, avgHipY, avgAnkleY, rightElbow,
     rightKneeY, leftElbowY, leftShoulderY) {
-  int currentTime2 =
-      DateTime.now().millisecondsSinceEpoch; 
-      
-      plankError(avgShoulderY, avgHipY, currentTime2);// Get current time in milliseconds
+  int currentTime2 = DateTime.now().millisecondsSinceEpoch;
+
+  plankError(
+      avgShoulderY, avgHipY, currentTime2); // Get current time in milliseconds
 
   // Detect proper side plank position (right side)
 
@@ -468,9 +510,9 @@ void sidePlankLeftExercise(avgShoulderY, avgHipY, avgAnkleY, leftElbow,
 
 void normalPlankExercise(avgShoulderY, avgHipY, avgAnkleY, leftElbow, leftKneeY,
     rightElbowY, rightShoulderY) {
-  int currentTime =
-      DateTime.now().millisecondsSinceEpoch; 
-       plankError(avgShoulderY, avgHipY, currentTime);// Get current time in milliseconds
+  int currentTime = DateTime.now().millisecondsSinceEpoch;
+  plankError(
+      avgShoulderY, avgHipY, currentTime); // Get current time in milliseconds
   print(" $rightElbowY      <     $rightShoulderY                   ");
   // Detect proper side plank position (right side)
   if (avgHipY < avgShoulderY + 50 &&
