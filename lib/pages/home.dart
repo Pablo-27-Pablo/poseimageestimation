@@ -6,7 +6,7 @@ import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:poseimageestimation/exercise/exercise.dart';
 import 'package:poseimageestimation/pages/arcade_mode_page.dart';
-import 'package:poseimageestimation/pages/practice.dart';
+import 'package:poseimageestimation/pages/Main_Pages/Exercises_Page.dart';
 
 import '../utils/constant.dart';
 
@@ -127,13 +127,15 @@ class _MyHomeState extends State<MyHome> {
               )),
           GestureDetector(
               onDoubleTap: () {
+                
                 int last = peopleBox.get("final", defaultValue: 0);
 
-                if (last < 1 ) {
+                if (last < 1) {
                   peopleBox.put("squat", 0);
                   peopleBox.put("legraises", 0);
                   peopleBox.put("pushup", 0);
                   peopleBox.put("situp", 0);
+                  peopleBox.put("finalcoloriesburn", 0);
                   peopleBox.put("final", 5);
                 }
 

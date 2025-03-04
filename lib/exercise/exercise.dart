@@ -1,13 +1,11 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:poseimageestimation/pages/DayChallengeComplete.dart';
-import 'package:poseimageestimation/pages/practice.dart';
+import 'package:poseimageestimation/pages/Awarding_Page.dart';
+import 'package:poseimageestimation/pages/Main_Pages/Exercises_Page.dart';
 import 'package:poseimageestimation/utils/constant.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:async';
 import 'package:hive_flutter/hive_flutter.dart';
-
-
 
 FlutterTts _flutterTts = FlutterTts();
 speak(text) async {
@@ -16,9 +14,29 @@ speak(text) async {
   _flutterTts.speak(text);
 }
 
+Formula() {
+  for (int i = 0; i < exercises2.length; i++) {
+    if (exercises2[i]["name"] == ExerciseName) {
+      print("Exercise found: ${exercises2[i]}");
+      double formula = ((exercises2[i]["MET"] * 85 * raise) / 1000);
+      totalCaloriesBurn = totalCaloriesBurn + formula;
+      totalCaloriesBurnDatabase = peopleBox.get("finalcoloriesburn");
+      peopleBox.put("finalcoloriesburn", totalCaloriesBurnDatabase);
+      print(peopleBox.get("finalcoloriesburn"));
+
+      print("         $ExerciseName                " +
+          totalCaloriesBurn.toString());
+      print("                         " + totalCaloriesBurn.toString());
+      print("                         " + totalCaloriesBurn.toString());
+      print("                         " + totalCaloriesBurn.toString());
+      print("                         " + totalCaloriesBurn.toString());
+    }
+  }
+}
+
 // Function to detect squat exercise movements
-void squatExercise(BuildContext context,leftHip, leftKnee, leftAnkle, averageShoulder, averageHips,
-    averageShoulderY, averageHipsY) {
+void squatExercise(BuildContext context, leftHip, leftKnee, leftAnkle,
+    averageShoulder, averageHips, averageShoulderY, averageHipsY) {
   double kneeAngle = calculateKneeAngle(leftHip, leftKnee, leftAnkle);
 
   // Ensure proper posture
@@ -52,10 +70,14 @@ void squatExercise(BuildContext context,leftHip, leftKnee, leftAnkle, averageSho
           days = peopleBox.get(ExerciseName, defaultValue: 0);
           print(ExerciseName);
           int TotalCount = 1 + days;
-          if (TotalCount % 100 == 0 && TotalCount >= 100 && TotalCount <= 3000) {
+
+          if (TotalCount % 100 == 0 &&
+              TotalCount >= 100 &&
+              TotalCount <= 3000) {
+            Formula();
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => CompleteWorkout()),
+              MaterialPageRoute(builder: (context) => CongratsApp()),
             );
           }
           peopleBox.put(ExerciseName, TotalCount);
@@ -69,8 +91,8 @@ void squatExercise(BuildContext context,leftHip, leftKnee, leftAnkle, averageSho
   }
 }
 
-void pushupExercise(avgWristY, avgShoulderY, avgElbowY, averageHipsY,
-    averageKneeY, averageAnkleY) {
+void pushupExercise(BuildContext context, avgWristY, avgShoulderY, avgElbowY,
+    averageHipsY, averageKneeY, averageAnkleY) {
   pushupError(
       averageHipsY, avgShoulderY, avgWristY, averageKneeY, averageAnkleY);
 
@@ -110,8 +132,17 @@ void pushupExercise(avgWristY, avgShoulderY, avgElbowY, averageHipsY,
           days = peopleBox.get(ExerciseName, defaultValue: 0);
           print(ExerciseName);
           int TotalCount = 1 + days;
+          if (TotalCount % 100 == 0 &&
+              TotalCount >= 100 &&
+              TotalCount <= 3000) {
+            Formula();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => CongratsApp()),
+            );
+          }
           peopleBox.put(ExerciseName, TotalCount);
-          raise = peopleBox.get(ExerciseName);
+          raise = peopleBox.get(ExerciseName) % 100;
         } else {
           raise++;
         }
@@ -181,8 +212,8 @@ StandStraight(shoulder, hips) {
 }
 
 // Function to detect leg raise movements
-void legRaiseExercise(
-    avgHipY, avgKneeY, avgAnkleY, averageShoulderY, averageEarsY) {
+void legRaiseExercise(BuildContext context, avgHipY, avgKneeY, avgAnkleY,
+    averageShoulderY, averageEarsY) {
   // Detect "down" position
 
   if (averageShoulderY + 10 > avgHipY && averageEarsY + 20 > avgHipY) {
@@ -240,8 +271,17 @@ void legRaiseExercise(
           days = peopleBox.get(ExerciseName, defaultValue: 0);
           print(ExerciseName);
           int TotalCount = 1 + days;
+          if (TotalCount % 100 == 0 &&
+              TotalCount >= 100 &&
+              TotalCount <= 3000) {
+            Formula();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => CongratsApp()),
+            );
+          }
           peopleBox.put(ExerciseName, TotalCount);
-          raise = peopleBox.get(ExerciseName);
+          raise = peopleBox.get(ExerciseName) % 100;
         } else {
           raise++;
         }
@@ -251,7 +291,8 @@ void legRaiseExercise(
   }
 }
 
-void sitUpExercise(noseX, avgShoulderY, avgHipY, averageKneeY, averageAnkleY) {
+void sitUpExercise(BuildContext context, noseX, avgShoulderY, avgHipY,
+    averageKneeY, averageAnkleY) {
   //sitUpError(avgHeadY, avgShoulderY, avgHipY);
   if (averageKneeY + 70 < avgHipY && averageKneeY + 70 < averageAnkleY) {
     // Detect "down" position (shoulders near the ground)
@@ -285,8 +326,17 @@ void sitUpExercise(noseX, avgShoulderY, avgHipY, averageKneeY, averageAnkleY) {
           days = peopleBox.get(ExerciseName, defaultValue: 0);
           print(ExerciseName);
           int TotalCount = 1 + days;
+          if (TotalCount % 100 == 0 &&
+              TotalCount >= 100 &&
+              TotalCount <= 3000) {
+            Formula();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => CongratsApp()),
+            );
+          }
           peopleBox.put(ExerciseName, TotalCount);
-          raise = peopleBox.get(ExerciseName);
+          raise = peopleBox.get(ExerciseName) % 100;
         } else {
           raise++;
         }
@@ -532,51 +582,44 @@ void normalPlankExercise(avgShoulderY, avgHipY, avgAnkleY, leftElbow, leftKneeY,
   }
 }
 
-void lungesExercise(
-    averageHipsY,
-    averageHipsX,
-    leftKneeX,
-    leftKneeY,
-    rightKneeX,
-    rightKneeY,
-    leftAnkleY,
-    leftAnkleX,
-    rightAnkleY,
-    rightAnkleX,
-    avgShoulderX) {
+void lungesExercise(averageHipsY, averageHipsX, leftKneeY, rightKneeY,
+    leftAnkleY, rightAnkleY, avgShoulderX, avgShoulderY) {
   StandStraight(avgShoulderX, averageHipsX);
   // Detect "down" position (knee close to the ground)
-  print(" $staticIsDown     ");
-  if (leftAnkleY < leftKneeY + 40 &&
-      rightKneeY < averageHipsY + 15 &&
-      rightAnkleY < leftKneeY + 40 &&
-      !staticIsDown) {
-    print("true");
-    print("                     ");
+  if (avgShoulderY + 50 < averageHipsY &&
+      averageHipsY < leftAnkleY &&
+      averageHipsY < rightAnkleY) {
+    if (leftAnkleY < leftKneeY + 40 &&
+        rightKneeY < averageHipsY + 15 &&
+        rightAnkleY < leftKneeY + 40 &&
+        !staticIsDown) {
+      print("true");
+      print("                     ");
 
-    if (!staticIsDown) {
-      staticIsDown = true;
-      staticIsUp = false;
-      warningIndicatorScreen = true;
-      warningIndicatorTextExercise = "";
+      if (!staticIsDown) {
+        staticIsDown = true;
+        staticIsUp = false;
+        warningIndicatorScreen = true;
+        warningIndicatorTextExercise = "";
+      }
     }
-  }
 
-  if (rightAnkleY < rightKneeY + 40 &&
-      leftKneeY < averageHipsY + 15 &&
-      leftAnkleY < rightKneeY + 50 &&
-      !staticIsUp) {
-    print("false");
-    print("    $rightKneeY 40 +  > $leftAnkleY               ");
+    if (rightAnkleY < rightKneeY + 40 &&
+        leftKneeY < averageHipsY + 15 &&
+        leftAnkleY < rightKneeY + 50 &&
+        !staticIsUp) {
+      print("false");
+      print("    $rightKneeY 40 +  > $leftAnkleY               ");
 
-    if (staticIsDown && !staticIsUp) {
-      staticIsUp = true;
-      staticIsDown = false;
-      print(staticIsUp);
+      if (staticIsDown && !staticIsUp) {
+        staticIsUp = true;
+        staticIsDown = false;
+        print(staticIsUp);
 
-      // Count a completed lunge
-      raise++;
-      print("Lunge count: $raise");
+        // Count a completed lunge
+        raise++;
+        print("Lunge count: $raise");
+      }
     }
   }
 }

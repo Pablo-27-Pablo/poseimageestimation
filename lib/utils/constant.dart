@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-
 //global variable
 bool staticIsUp = false;
 bool staticIsDown = false;
@@ -10,7 +9,7 @@ bool warningIndicatorScreen = true;
 String warningIndicatorText = "";
 String warningIndicatorTextExercise = "";
 int raise = 0;
-int seconds = 5;
+int seconds = 60;
 int seconds2 = 30;
 Timer? timer;
 String ExerciseName = "";
@@ -26,7 +25,8 @@ String Mode = "daysChallenge";
 bool youNear = true;
 int days = 0;
 var peopleBox = Hive.box("Box");
-
+double totalCaloriesBurn = 0;
+double totalCaloriesBurnDatabase = 0;
 
 //small Gap
 
@@ -68,19 +68,36 @@ class AppColor {
 }
 //exercises
 
-  final List<Map<String, String>> exercises = [
-    {"name": "squat", "image": "squat.gif"},
-    {"name": "jumpingjacks", "image": "jumpingjacks.gif"},
-    {"name": "legraises", "image": "legraises.gif"},
-    {"name": "situp", "image": "situp.gif"},
-    {"name": "mountainclimbers", "image": "mountainclimbers.gif"},
-    {"name": "highknee", "image": "highknee.gif"},
-    {"name": "lunges", "image": "lunges.gif"},
-    {"name": "plank", "image": "plank.jpg"},
-    {"name": "rightplank", "image": "sideplank.gif"},
-    {"name": "leftplank", "image": "sideplank.gif"},
-    {"name": "pushup", "image": "pushup.gif"},
-  ];
+final List<Map<String, String>> exercises = [
+  {"name": "squat", "image": "squat.gif"},
+  {"name": "jumpingjacks", "image": "jumpingjacks.gif"},
+  {"name": "legraises", "image": "legraises.gif"},
+  {"name": "situp", "image": "situp.gif"},
+  {"name": "mountainclimbers", "image": "mountainclimbers.gif"},
+  {"name": "highknee", "image": "highknee.gif"},
+  {"name": "lunges", "image": "lunges.gif"},
+  {"name": "plank", "image": "plank.jpg"},
+  {"name": "rightplank", "image": "sideplank.gif"},
+  {"name": "leftplank", "image": "sideplank.gif"},
+  {"name": "pushup", "image": "pushup.gif"},
+];
+
+final List<Map<String, dynamic>> exercises2 = [
+  {"name": "squat", "MET": 6},
+  {"name": "jumpingjacks", "MET": 8},
+  {"name": "legraises", "MET": 3},
+  {"name": "situp", "MET": 6},
+  {"name": "lunges", "MET": 6},
+  {"name": "plank", "MET": 4},
+  {"name": "rightplank", "MET": 4},
+  {"name": "leftplank", "MET": 4},
+  {"name": "pushup", "MET": 7},
+  {"name": "highknee", "MET": 9},
+  {"name": "mountainclimbers", "MET": 8},
+];
+
+
+
 
 class Utils extends StatefulWidget {
   const Utils({super.key});

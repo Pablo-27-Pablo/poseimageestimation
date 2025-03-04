@@ -16,8 +16,8 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
-              print(peopleBox.get('squat'));
-              peopleBox.put('squat',1020);
+              print(peopleBox.get('finalcoloriesburn'));
+              //peopleBox.put('squat',1020);
             },
             icon: Icon(Icons.abc_rounded)),
       ),

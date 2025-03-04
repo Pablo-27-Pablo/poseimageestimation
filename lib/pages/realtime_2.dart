@@ -10,10 +10,11 @@ import 'package:camera/camera.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'package:poseimageestimation/exercise/exercise.dart';
 import 'package:poseimageestimation/main.dart';
+import 'package:poseimageestimation/pages/Awarding_Page.dart';
+import 'package:poseimageestimation/pages/Main_Pages/resttime.dart';
 import 'package:poseimageestimation/pages/arcade_mode_page.dart';
 import 'package:poseimageestimation/pages/home.dart';
-import 'package:poseimageestimation/pages/practice.dart';
-import 'package:poseimageestimation/pages/resttime.dart';
+import 'package:poseimageestimation/pages/Main_Pages/Exercises_Page.dart';
 import 'package:poseimageestimation/utils/constant.dart';
 
 import '../utils/constant.dart';
@@ -48,15 +49,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     initializeCamera();
-    // countingTimer();
-    // Future.delayed(Duration.zero, () {
-    //   // youNear ? () : startTimer();
-    //   startTimer();
-    // });
+
     if (Mode == "dayChallenge") {
       raise = peopleBox.get(ExerciseName) % 100;
     }
   }
+
 
   void SecondOutput() {
     if (ExerciseName == "plank" ||
@@ -72,6 +70,27 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Formula() {
+    for (int i = 0; i < exercises2.length; i++) {
+      if (exercises2[i]["name"] == ExerciseName) {
+        print("Exercise found: ${exercises2[i]}");
+        double formula =
+            (((exercises2[i]["MET"] * 85 * 3.5) / 200) / 60) * raise;
+        totalCaloriesBurn = totalCaloriesBurn + formula;
+        totalCaloriesBurnDatabase = peopleBox.get("finalcoloriesburn");
+        peopleBox.put("finalcoloriesburn", totalCaloriesBurnDatabase);
+        print(peopleBox.get("finalcoloriesburn"));
+
+        print("         $ExerciseName                " +
+            totalCaloriesBurn.toString());
+        print("                         " + totalCaloriesBurn.toString());
+        print("                         " + totalCaloriesBurn.toString());
+        print("                         " + totalCaloriesBurn.toString());
+        print("                         " + totalCaloriesBurn.toString());
+      }
+    }
+  }
+
   void startTimer() {
     timer = Timer.periodic(Duration(seconds: 1), (_) {
       print("Timer has finished.");
@@ -83,36 +102,42 @@ class _MyHomePageState extends State<MyHomePage> {
         timer?.cancel(); // Stop the timer
         print("Timer has finished.");
 
-        raise = 0;
-        ExerciseName = "";
         warningIndicatorScreen = true;
         warningIndicatorText = "";
-        ExerciseName = "";
-        seconds = 5;
+
         if (Mode == "Arcade") {
           if (arcadeNumber == 11) {
             setState(() {
+              arcadeNumber = 1;
               ExerciseName = "";
               image = "";
             });
 
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ArcadeModePage()),
+              MaterialPageRoute(builder: (context) => CongratsApp()),
             );
           } else {
+            Formula();
+
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => RestimeTutorial()));
 
             arcadeNumber = arcadeNumber + 1;
           }
         } else if (Mode == "postureCorrection") {
+          timer?.cancel();
+          
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => Trypage()));
-        }else if (Mode == "dayChallenge") {
+        } else if (Mode == "dayChallenge") {
+
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => Trypage()));
         }
+
+        ExerciseName = "";
+        raise = 0;
       }
 
       print("timer reduced" + seconds.toString());
@@ -257,24 +282,24 @@ class _MyHomePageState extends State<MyHomePage> {
       double averageKneeX = (leftKnee.x + rightKnee.x) / 2;
       double averageAnkleY = (leftAnkle.y + rightAnkle.y) / 2;
       int currentTime4 = DateTime.now().millisecondsSinceEpoch;
-      if (65 > (leftEars.x - rightEars.x)) {
+
+      if (65 > (leftEars.x - rightEars.x) &&
+          (leftAnkle.y > 150 && leftAnkle.y < 1000) &&
+          (rightShoulder.y > 150 && rightShoulder.y < 1000) &&
+          (nose.x > 50 && nose.x < 650) &&
+          (leftShoulder.x > 50 && leftShoulder.x < 650) &&
+          (rightShoulder.x > 50 && rightShoulder.x < 650) &&
+          (leftAnkle.x > 50 && leftAnkle.x < 650) &&
+          (rightAnkle.x > 50 && rightAnkle.x < 650)) {
         Mode == "dayChallenge" ? Container() : countingTimer();
         errorWholebody = "";
-
-        if ((rightWrist.y > 700 && rightWrist.y < 800) &&
-            (leftWrist.y > 700 && leftWrist.y < 800) &&
-            (rightWrist.x > 500 && rightWrist.x < 700) &&
-            (leftWrist.x > 500 && leftWrist.x < 700)) {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => Trypage()));
-        }
 
         if (ExerciseName == "squat") {
           squatExercise(context, leftHip, leftKnee, leftAnkle, averageShoulderX,
               averageHipsX, averageShoulderY, averageHipsY);
         } else if (ExerciseName == "pushup") {
-          pushupExercise(averageWristY, averageShoulderY, averageElbowY,
-              averageHipsY, averageKneeY, averageAnkleY);
+          pushupExercise(context, averageWristY, averageShoulderY,
+              averageElbowY, averageHipsY, averageKneeY, averageAnkleY);
         } else if (ExerciseName == "jumpingjacks") {
           jumpingJacksExercise(
               averageWristY,
@@ -288,11 +313,11 @@ class _MyHomePageState extends State<MyHomePage> {
               averageHipsX,
               averageAnkleY);
         } else if (ExerciseName == "legraises") {
-          legRaiseExercise(averageHipsY, averageKneeY, averageAnkleY,
+          legRaiseExercise(context, averageHipsY, averageKneeY, averageAnkleY,
               averageShoulderY, averageEarsY);
         } else if (ExerciseName == "situp") {
-          sitUpExercise(nose.y, averageShoulderY, averageHipsY, averageKneeY,
-              averageAnkleY);
+          sitUpExercise(context, nose.y, averageShoulderY, averageHipsY,
+              averageKneeY, averageAnkleY);
         } else if (ExerciseName == "mountainclimbers") {
           mountainClimbersExercise(
               averageKneeY,
@@ -308,18 +333,8 @@ class _MyHomePageState extends State<MyHomePage> {
           highKneeExercise(leftKnee.y, rightKnee.y, averageHipsY, averageHipsX,
               averageShoulderX, averageShoulderY, averageAnkleY);
         } else if (ExerciseName == "lunges") {
-          lungesExercise(
-              averageHipsY,
-              averageHipsX,
-              leftKnee.x,
-              leftKnee.y,
-              rightKnee.x,
-              rightKnee.y,
-              leftAnkle.y,
-              leftAnkle.x,
-              rightAnkle.y,
-              rightAnkle.x,
-              averageShoulderX);
+          lungesExercise(averageHipsY, averageHipsX, leftKnee.y, rightKnee.y,
+              leftAnkle.y, rightAnkle.y, averageShoulderX, averageShoulderY);
         } else if (ExerciseName == "plank") {
           normalPlankExercise(averageShoulderY, averageHipsY, averageAnkleY,
               leftElbow.y, leftKnee.y, rightKnee.y, rightShoulder.y);
@@ -333,25 +348,13 @@ class _MyHomePageState extends State<MyHomePage> {
       } else {
         if (ExerciseName != "") {
           if (currentTime4 - lastUpdateTime3 >= 3000) {
-            errorWholebody = "Show your whole Body!!";
+            errorWholebody = "Show your whole Body or Move Backward!!";
             speak(errorWholebody);
             warningIndicatorScreen = false;
             lastUpdateTime3 = currentTime4; // Update the last update time
           }
         }
       }
-
-      // lungesExercise(
-      //     averageHipsY,
-      //     averageHipsX,
-      //     leftKnee.x,
-      //     leftKnee.y,
-      //     rightKnee.x,
-      //     rightKnee.y,
-      //     leftAnkle.y,
-      //     leftAnkle.x,
-      //     rightAnkle.y,
-      //     rightAnkle.x);
 
       setState(() {
         raise = raise;
@@ -521,41 +524,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.only(left: 20),
-                            height: 70,
-                            color: AppColor.backgroundgrey.withOpacity(0.8),
-                            child: GestureDetector(
-                              onDoubleTap: () {
-                                print("Pagod na pagod nako");
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    "Next",
-                                    style: TextStyle(
-                                        color: AppColor.textwhite,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Icon(
-                                    Icons.arrow_right,
-                                    color: AppColor.textwhite,
-                                    size: 35,
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                       largeGap,
                       largeGap,
                       largeGap,
@@ -714,16 +682,23 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     return Scaffold(
       appBar: AppBar(
+        
+        leading: Mode == "dayChallenge" ? IconButton(onPressed: (){
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => ArcadeModePage()),
+            );
+        }, icon: Icon(Icons.arrow_back,color: AppColor.primary,)): Container(),
         title: const Text(
           "Pose Estimation",
-          style: TextStyle(color: AppColor.purpletext),
+          style: TextStyle(color: AppColor.primary),
         ),
         backgroundColor: AppColor.backgroundgrey,
         actions: [
           IconButton(
             icon: Icon(
               Icons.flip_camera_android,
-              color: AppColor.purpletext,
+              color: AppColor.primary,
             ),
             onPressed: toggleCamera,
           ),

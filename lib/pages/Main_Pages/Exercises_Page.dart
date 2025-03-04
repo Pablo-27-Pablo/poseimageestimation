@@ -17,6 +17,7 @@ class _TrypageState extends State<Trypage> {
 
   final List<Map<String, String>> exercises = [
     {"name": "squat", "image": "squat.gif", "PrimaryName": "Squat"},
+    {"name": "pushup", "image": "pushup.gif", "PrimaryName": "Push-Up"},
     {
       "name": "jumpingjacks",
       "image": "jumpingjacks.gif",
@@ -40,7 +41,11 @@ class _TrypageState extends State<Trypage> {
       "image": "sideplank.gif",
       "PrimaryName": "Left-Plank"
     },
-    {"name": "pushup", "image": "sideplank.jpg", "PrimaryName": "Push-Up"},
+    {
+      "name": "mountainclimbers",
+      "image": "mountainclimbers.gif",
+      "PrimaryName": "Mountain-Climbers"
+    },
   ];
 
   void _speak(String text) async {
@@ -70,6 +75,7 @@ class _TrypageState extends State<Trypage> {
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
+              seconds = 60;
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => MyHome()),
@@ -114,7 +120,10 @@ class _TrypageState extends State<Trypage> {
               children: [
                 Text(
                   "Exercise: ",
-                  style: TextStyle(color: AppColor.textwhite,fontSize: 20,fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: AppColor.textwhite,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
                 ),
               ],
             ),

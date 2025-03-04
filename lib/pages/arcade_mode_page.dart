@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:poseimageestimation/pages/daysChallenge.dart';
+import 'package:poseimageestimation/pages/Main_Pages/daysChallenge.dart';
 import 'package:poseimageestimation/pages/home.dart';
-import 'package:poseimageestimation/pages/realtime_2.dart';
-import 'package:poseimageestimation/pages/resttime.dart';
+import 'package:poseimageestimation/pages/Main_Pages/resttime.dart';
 import 'package:poseimageestimation/utils/constant.dart';
 
 class ArcadeModePage extends StatefulWidget {
